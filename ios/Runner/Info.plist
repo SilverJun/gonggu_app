@@ -53,6 +53,11 @@
 			</array>
 		</dict>
 	</array>
-
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app uses your photos to make a new product</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app uses your photos to make a new product</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app uses your photos to make a new product</string>
 </dict>
 </plist>

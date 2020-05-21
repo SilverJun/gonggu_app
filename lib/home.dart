@@ -192,18 +192,34 @@ class HomePageState extends State<HomePage> {
 
     return ListTile(
       leading: FutureBuilder(
-          future: getImageURL(data['filename']),
-          builder: (context, AsyncSnapshot<String> value) {
-            return Image.network(
-              value.hasData ? value.data : "http://handong.edu/site/handong/res/img/logo.png",
-              fit: BoxFit.fitHeight,
-            );
-          }
+        future: getImageURL(data['filename']),
+        builder: (context, AsyncSnapshot<String> value) {
+          return Image.network(
+            value.hasData ? value.data : "http://handong.edu/site/handong/res/img/logo.png",
+            fit: BoxFit.fitHeight,
+          );
+        }
       ),
       title: Text(product.name),
-      subtitle: Text("공구가: ₩"+product.price.toString()),
+      subtitle: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("공구가: ₩"+product.price.toString()),
+            Row(
+              children: [
+                Text("진행도: "),
+                Flexible(child: LinearProgressIndicator(value: product.progress,)),
+              ],
+            )
+          ],
+        ),
+      ),
       trailing: IconButton(
         icon: Icon(Icons.favorite_border),
+        onPressed: () {
+          // TODO : favorite page 만들기.
+        },
       ),
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(product: product,)));

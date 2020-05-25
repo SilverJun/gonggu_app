@@ -25,7 +25,7 @@ enum Category {
   Electronics, // 전자제품
   Accessory, // 악세서리
   Clothes, // 의류
-  stationery, // 문구류
+  Stationery, // 문구류
   Etc,
 }
 

@@ -42,6 +42,7 @@ class Product {
     @required this.creatorUid,
     @required this.name,
     @required this.price,
+    @required this.currentCount,
     @required this.objectCount,
     @required this.shipAddr,
     @required this.startTime,
@@ -55,6 +56,7 @@ class Product {
         assert(creatorUid != null),
         assert(name != null),
         assert(price != null),
+        assert(currentCount != null),
         assert(objectCount != null),
         assert(shipAddr != null),
         assert(startTime != null),
@@ -69,6 +71,7 @@ class Product {
   final String creatorUid; // 이 아이템을 만든 사람의 uid
   final String name; // 상품이름
   final int price; // 가격
+  final int currentCount; // 목표수량
   final int objectCount; // 목표수량
   final String shipAddr; // 배송지
   final Timestamp startTime; // 시작시간
@@ -86,6 +89,7 @@ class Product {
         assert(map['creatorUid'] != null),
         assert(map['name'] != null),
         assert(map['price'] != null),
+        assert(map['currentCount'] != null),
         assert(map['objectCount'] != null),
         assert(map['shipAddr'] != null),
         assert(map['startTime'] != null),
@@ -98,6 +102,7 @@ class Product {
         creatorUid = map['creatorUid'],
         name = map['name'],
         price = map['price'],
+        currentCount = map['currentCount'],
         objectCount = map['objectCount'],
         shipAddr = map['shipAddr'],
         startTime = map['startTime'],

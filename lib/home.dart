@@ -231,16 +231,52 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.person,
-            semanticLabel: 'profile',
-          ),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
-          },
+      drawer: Drawer(
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Container(
+                padding: EdgeInsets.symmetric(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(child: Image.network(appProfile.user.photoUrl)),
+                    Text(appProfile.user.displayName + ' 회원님', style: Theme.of(context).textTheme.headline5.merge(TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),),
+                    Text('안녕하세요', style: Theme.of(context).textTheme.headline6.merge(TextStyle(color: Colors.white))),
+                  ]
+                )
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+            ),
+            ExpansionTile(
+              title: Text('카테고리', style: Theme.of(context).textTheme.subtitle1,),
+              initiallyExpanded: true,
+              children: Category.values.map((e) => ListTile(
+                title: Text(e.toString().substring(9)),
+                trailing: IconButton(icon: Icon(Icons.favorite_border)), // TODO : here too..
+                onTap: () {
+                  // TODO : firebase 연동하기.
+                },
+              )).toList()
+            ),
+          ],
         ),
+      ),
+      appBar: AppBar(
+//        leading: IconButton(
+//          icon: Icon(
+//            Icons.person,
+//            semanticLabel: 'profile',
+//          ),
+//          onPressed: () {
+//            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+//          },
+//        ),
         title: Text('Main'),
         actions: <Widget>[
           IconButton(

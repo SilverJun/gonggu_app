@@ -24,11 +24,11 @@ import 'package:gongguapp/AppData.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-void addUserToDB(String uid) async {
-  await Firestore.instance.collection('users').document(uid).get().then((value) {
+void addUserToDB(FirebaseUser user) async {
+  await Firestore.instance.collection('users').document(user.uid).get().then((value) {
     if (!value.exists) {
       //print("need to append user");
-      Firestore.instance.collection('users').document(uid).setData({'likes':[]});
+      Firestore.instance.collection('users').document(user.uid).setData({'displayName':user.displayName, 'photoUrl':user.photoUrl ,'phoneNumber':user.phoneNumber });
     }
   });
 }
@@ -55,7 +55,7 @@ void _signInWithGoogle(BuildContext context) async {
   if (user != null) {
     appProfile.user = user;
     appProfile.loginType = LoginType.Google;
-    addUserToDB(user.uid);
+    addUserToDB(user);
     Navigator.popAndPushNamed(context, '/home');
   }
 }
@@ -100,7 +100,7 @@ class AnonymousSigninButton extends StatelessWidget {
     if (user != null) {
       appProfile.user = user;
       appProfile.loginType = LoginType.Anonymous;
-      addUserToDB(user.uid);
+      addUserToDB(user);
       Navigator.popAndPushNamed(context, '/home');
     }
   }

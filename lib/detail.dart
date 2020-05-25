@@ -47,74 +47,61 @@ class DetailPageState extends State<DetailPage> {
           ]
         ),
         Padding(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Text(product.name, style: Theme.of(context).textTheme.headline5.merge(TextStyle(fontWeight: FontWeight.bold)),),
               SizedBox(height: 8.0,),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(product.name, style: Theme.of(context).textTheme.headline5.merge(TextStyle(color: Color.fromRGBO(42, 88, 149, 1.0), fontWeight: FontWeight.bold)),),
-                        SizedBox(height: 12.0,),
-                        Text('₩'+product.price.toString(), style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent))),
-                      ],
-                    ),
-                  ),
-//                  IconButton(
-//                    icon: Icon(Icons.thumb_up),
-//                    color: Colors.blue,
-//                    onPressed: () async {
-//                      // check if this user already like
-//                      //   like decrease
-//                      // else like increase
-//                      final uuid = product.uuid;
-//                      final uid = appProfile.user.uid;
-//
-//                      Firestore.instance.collection('users').document(uid).get().then((value) {
-//                        //print(value.data);
-//                        List<dynamic> likes = value.data['likes'];
-//                        //print(likes);
-//                        if (likes.contains(uuid)) {
-//                          Scaffold.of(context).showSnackBar(SnackBar(content:Text("You already like it!")));
-//                        }
-//                        else {
-//                          product.reference.updateData({'likes': FieldValue.increment(1)});
-//                          value.reference.updateData({'likes': FieldValue.arrayUnion([uuid])});
-//                          Scaffold.of(context).showSnackBar(SnackBar(content:Text("Like it!")));
-//                        }
-//                      });
-//                    },
-//                  ),
-//                  Text(
-//                    "test",//product.likes.toString(),
-//                    style: Theme.of(context).textTheme.subtitle1.merge(TextStyle(color: Colors.blueAccent),)
-//                  ),
-                ],
+              //
+              // 공구 진행자
+              Builder(
+                builder: (context) {
+                  return FutureBuilder(
+                      future: Firestore.instance.collection('users').document(product.creatorUid).get(),
+                      builder: (context, AsyncSnapshot<DocumentSnapshot> value) {
+                        return Row(
+                          children: <Widget>[
+                            Container(
+                                width: 30,
+                                height: 30,
+                                child: CircleAvatar(
+                                  radius: 50,
+                                  backgroundImage: value.hasData ? NetworkImage(value.data['photoUrl']) : null,
+                                  backgroundColor: Colors.grey,
+                                ),
+                            ),
+                            SizedBox(width: 8,),
+                            Text(value.hasData ? value.data['displayName']+' >' : ''),
+                          ],
+                        );
+                      }
+                  );
+                }
               ),
               SizedBox(height: 8.0,),
-              Divider(thickness: 1.5,),
-              SizedBox(height: 8.0,),
-              Text("목표수량: "+product.objectCount.toString(), style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent))),
-              SizedBox(height: 8.0,),
-              Divider(thickness: 1.5,),
-              SizedBox(height: 8.0,),
-              Text("배송지: "+product.shipAddr, style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent))),
+              //
+              Text(product.price.toString()+'원', style: Theme.of(context).textTheme.subtitle1.merge(TextStyle(fontWeight: FontWeight.bold))),
               SizedBox(height: 8.0,),
               Divider(thickness: 1.5,),
               SizedBox(height: 8.0,),
-              Text("마감일: "+product.endTime.toDate().toString(), style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent))),
+              Text("목표수량: "+product.objectCount.toString(), style: Theme.of(context).textTheme.bodyText1),
               SizedBox(height: 8.0,),
               Divider(thickness: 1.5,),
               SizedBox(height: 8.0,),
-              Text("카테고리: "+product.category, style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent))),
+              Text("배송지: "+product.shipAddr, style: Theme.of(context).textTheme.bodyText1),
               SizedBox(height: 8.0,),
               Divider(thickness: 1.5,),
               SizedBox(height: 8.0,),
-              Text(product.desc, style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent))),
+              Text("마감일: "+product.endTime.toDate().toString(), style: Theme.of(context).textTheme.bodyText1),
+              SizedBox(height: 8.0,),
+              Divider(thickness: 1.5,),
+              SizedBox(height: 8.0,),
+              Text("카테고리: "+product.category, style: Theme.of(context).textTheme.bodyText1),
+              SizedBox(height: 8.0,),
+              Divider(thickness: 1.5,),
+              SizedBox(height: 8.0,),
+              Text(product.desc, style: Theme.of(context).textTheme.bodyText1),
             ],
           ),
         ),

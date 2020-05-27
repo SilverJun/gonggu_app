@@ -69,6 +69,7 @@ class AddPageState extends State<AddPage> {
                       'filename': path.basename(_image.path),
                       'category' : "test category",
                       'progress' : 0.0,
+                      'currentCount' : 1,
                       'desc': _descController.text,
                     }).then((value) => Navigator.pop(context));
                   }

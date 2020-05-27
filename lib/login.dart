@@ -148,9 +148,9 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           //mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Text('당신의 슬기로운 공구생활', style: TextStyle(color: Colors.white),),
+            Text('당신의 슬기로운 공구생활', style: TextStyle(color: Colors.white, fontSize:20, fontFamily: "Hippy"),),
             SizedBox(height: 8.0),
-            Text('공구통', style: TextStyle(color: Colors.white, fontSize: 50),),
+            Text('공구통', style: TextStyle(color: Colors.white, fontSize: 72, fontFamily: "Hippy"),),
             SizedBox(height: 120.0),
 
             AnonymousSigninButton(), // we don't need this for now.

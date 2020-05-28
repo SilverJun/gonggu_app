@@ -1,4 +1,5 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gongguapp/login.dart';
 import 'package:gongguapp/product.dart';
 import 'package:gongguapp/AppData.dart';
@@ -31,6 +32,7 @@ class ProfilePageState extends State<ProfilePage> {
             ),
             onPressed: () {
               appProfile = AppProfile(); // init login data.
+              FirebaseAuth.instance.signOut();
               Navigator.pushAndRemoveUntil(context,
                 MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
                 ModalRoute.withName('/'));

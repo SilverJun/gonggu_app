@@ -279,16 +279,34 @@ class HomePageState extends State<HomePage> {
 //        ),
         title: Text('Main'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              semanticLabel: 'add',
-            ),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(fullscreenDialog: true, builder: (context) => AddPage()));
-            },
+        IconButton(
+          icon: Icon(
+            Icons.person,
+            semanticLabel: 'profile',
           ),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+          },
+        ),
+//          IconButton(
+//            icon: Icon(
+//              Icons.add,
+//              semanticLabel: 'add',
+//            ),
+//            onPressed: () {
+//              Navigator.push(context, MaterialPageRoute(fullscreenDialog: true, builder: (context) => AddPage()));
+//            },
+//          ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add,
+          semanticLabel: 'add',
+        ),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(fullscreenDialog: true, builder: (context) => AddPage()));
+        },
       ),
       body: ListView(
         children: <Widget>[

@@ -124,6 +124,18 @@ class AnonymousSigninButton extends StatelessWidget {
 //
 //}
 
+Future<bool> checkLogin(BuildContext context) async {
+  final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  if (user != null) {
+    appProfile.user = user;
+    appProfile.loginType = LoginType.Anonymous;
+    addUserToDB(user);
+    Navigator.popAndPushNamed(context, '/home');
+    return true;
+  }
+  return false;
+}
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -153,14 +165,36 @@ class _LoginPageState extends State<LoginPage> {
             Text('공구통', style: TextStyle(color: Colors.white, fontSize: 72, fontFamily: "Hippy"),),
             SizedBox(height: 120.0),
 
-            AnonymousSigninButton(), // we don't need this for now.
-            //GoogleSigninButton(),
-            GoogleSignInButton(
-              onPressed: () async {
-                _signInWithGoogle(context);
+            StreamBuilder(
+              stream: FirebaseAuth.instance.onAuthStateChanged,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return CircularProgressIndicator();
+                if (snapshot.hasData) {
+                  return FutureBuilder(
+                    future: checkLogin(context),
+                    builder: (context, value) {
+                      if (!value.hasData)
+                        return CircularProgressIndicator();
+                      if (value.hasData && value.data)
+                        return Column(
+                          children: <Widget>[
+                            AnonymousSigninButton(), // we don't need this for now.
+                            //GoogleSigninButton(),
+                            GoogleSignInButton(
+                              onPressed: () async {
+                                _signInWithGoogle(context);
+                              },
+                              darkMode: true, // default: false
+                            )
+                          ],
+                        );
+                      return CircularProgressIndicator();
+                    },
+                  );
+                }
+                return CircularProgressIndicator();
               },
-              darkMode: true, // default: false
-            )
+            ),
           ],
         ),
       ),

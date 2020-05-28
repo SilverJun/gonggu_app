@@ -250,7 +250,7 @@ class HomePageState extends State<HomePage> {
                 )
               ),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Theme.of(context).primaryColor,
               ),
             ),
             ExpansionTile(

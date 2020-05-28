@@ -7,11 +7,14 @@ import 'package:gongguapp/AppData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:gongguapp/progress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
+
+
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -19,8 +22,46 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
+
+  Widget _buildCreatedProduct(BuildContext context)
+  {
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('product').where('creatorUid', isEqualTo: appProfile.user.uid).snapshots(),
+      builder: (context, snapshot) {
+        //print(snapshot);
+        if (!snapshot.hasData) return CircularProgressIndicator();
+        //print(snapshot.data.documents.asMap());
+
+        return ExpansionTile(
+          title: Text("내가 진행한 공구"),
+          children: snapshot.data.documents.map((e) {
+            Product product = Product.fromSnapshot(e);
+            return ListTile(
+              title: Text(product.name),
+              subtitle: Container(
+                child: Row(
+                  children: [
+                    Text("진행도: "),
+                    Flexible(child: LinearProgressIndicator(value: product.progress,)),
+                  ],
+                ),
+              ),
+              trailing: Icon(Icons.navigate_next),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ProgressPage(product: product,)));
+              },
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    //print(appProfile.user.phoneNumber==null);
+    var phone = appProfile.user.phoneNumber==null?"없음":appProfile.user.phoneNumber;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -44,17 +85,38 @@ class ProfilePageState extends State<ProfilePage> {
         padding: EdgeInsets.all(16.0),
         child: ListView(
           children: <Widget>[
-            Image.network(appProfile.loginType == LoginType.Anonymous ? "http://handong.edu/site/handong/res/img/logo.png" : appProfile.user.photoUrl, fit: BoxFit.fitWidth,),
+            Image.network(appProfile.user.photoUrl, fit: BoxFit.fitWidth,),
             SizedBox(height: 24.0,),
-            Text(appProfile.user.uid),
-            SizedBox(height: 16.0,),
+            Text("안녕하세요, " + appProfile.user.displayName + '님', style: Theme.of(context).textTheme.headline4,),
+            SizedBox(height: 8.0,),
             Divider(),
-            SizedBox(height: 16.0,),
-            Text(appProfile.loginType == LoginType.Anonymous ? "Anonymous" : appProfile.user.email),
+//            SizedBox(height: 16.0,),
+//            Text("uid: " + appProfile.user.uid),
+//            SizedBox(height: 16.0,),
+//            Text("E-mail: " + appProfile.user.email),
+//            SizedBox(height: 16.0,),
+//            Text("휴대전화: " + phone),
+//            SizedBox(height: 16.0,),
+            ListTile(
+              leading: Text('UID'),
+              title: Text(appProfile.user.uid),
+            ),
+            ListTile(
+              leading: Text('E-mail'),
+              title: Text(appProfile.user.email),
+            ),
+            ListTile(
+              leading: Text('휴대전화'),
+              title: Text(phone),
+            ),
+//            ListTile(
+//              leading: Text('계좌번호'),
+//              title: Text(bankAccount),
+//            ),
+            _buildCreatedProduct(context),
           ],
         ),
       )
     );
   }
-
 }

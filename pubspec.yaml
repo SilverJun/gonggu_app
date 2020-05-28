@@ -37,8 +37,8 @@ dependencies:
   intl: ^0.15.6
 
   flutter_auth_buttons: ^0.8.0
-
   introduction_screen: ^1.0.7
+  sleek_circular_slider : ^1.1.0
 
 dev_dependencies:
   flutter_test:

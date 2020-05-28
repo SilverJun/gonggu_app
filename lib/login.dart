@@ -128,7 +128,7 @@ Future<bool> checkLogin(BuildContext context) async {
   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
   if (user != null) {
     appProfile.user = user;
-    appProfile.loginType = LoginType.Anonymous;
+    appProfile.loginType = LoginType.Google;
     addUserToDB(user);
     Navigator.popAndPushNamed(context, '/home');
     return true;
@@ -170,6 +170,7 @@ class _LoginPageState extends State<LoginPage> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 if (snapshot.hasData) {
+
                   return FutureBuilder(
                     future: checkLogin(context),
                     builder: (context, value) {
@@ -178,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                       if (value.hasData && value.data)
                         return Column(
                           children: <Widget>[
-                            AnonymousSigninButton(), // we don't need this for now.
+                            //AnonymousSigninButton(), // we don't need this for now.
                             //GoogleSigninButton(),
                             GoogleSignInButton(
                               onPressed: () async {

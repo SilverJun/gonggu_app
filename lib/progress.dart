@@ -13,6 +13,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:gongguapp/detail.dart';
 import 'package:gongguapp/add.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class ProgressPage extends StatefulWidget {
 
@@ -67,7 +69,7 @@ class ProgressPageState extends State<ProgressPage> {
                       title: Text(e.data['displayName']),
                       trailing: Row(mainAxisSize: MainAxisSize.min, children: [Text(e.data['quantity'].toString()+'개'), Icon(Icons.navigate_next)]),
                       onTap: () {
-                        // Navigator.push(); // TODO : 네비게이터 링크.
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ParticipationDetailPage(documentSnapshot: e)));
                       },
                     )
                   ).toList(),
@@ -82,4 +84,43 @@ class ProgressPageState extends State<ProgressPage> {
   }
 }
 
-// TODO : 참여자 디테일 뷰 만들고 링크.
+class ParticipationDetailPage extends StatelessWidget {
+  final DocumentSnapshot documentSnapshot;
+
+  ParticipationDetailPage({this.documentSnapshot});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.phone),
+        onPressed: () {
+          var str = 'tel://+82'+(documentSnapshot.data['phoneNumber'].toString().replaceAll('-', ''));
+          print(str);
+          launch(str);
+        },
+      ),
+      appBar: AppBar(
+        title: Text('참여자 세부 정보'),
+      ),
+      body: ListView(
+        children: <Widget>[
+          ListTile(
+            leading: Text('이름'),
+            title: Text(documentSnapshot.data['displayName']),
+          ),
+          Divider(),
+          ListTile(
+            leading: Text('구매 수량'),
+            title: Text(documentSnapshot.data['quantity'].toString()),
+          ),
+          Divider(),
+          ListTile(
+            leading: Text('전화번호'),
+            title: Text(documentSnapshot.data['phoneNumber']??''),
+          ),
+        ],
+      ),
+    );
+  }
+}

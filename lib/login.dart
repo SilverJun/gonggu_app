@@ -20,6 +20,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 import 'package:gongguapp/AppData.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -219,5 +220,61 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+}
+
+class OnboardingPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return IntroductionScreen(
+      pages: [
+        PageViewModel(
+          title: "공동구매",
+          body: "좀 더 저렴하게 다양한 물건들을 공동구매 해보세요! 당신의 삶이 더 경제적이게 됩니다.",
+          image: Center(
+            child: Container(
+                alignment: Alignment.center,
+                child: Image.asset("images/purchase.png", height: 175.0)
+            ),
+          ),
+        ),
+        PageViewModel(
+          title: "다양한 제품",
+          body: "당신의 취향을 몰라 이것저것 다양하게 준비해두었으니 살펴보세요! 마음에 드는 물건을 저렴하게 구하실 수 있을 겁니다.",
+          image: Center(
+            child: Image.asset("images/things.png", height: 175.0),
+          ),
+        ),
+        PageViewModel(
+          title: "준비 되셨나요?",
+          body: "이제 끝났습니다. 당신을 슬기로운 공구생활로 초대합니다. 준비 되셨나요? 그럼 이제 시작하시죠!",
+          image: Center(
+            child: Image.asset("images/consumer.png", height: 175.0),
+          ),
+        ),
+      ],
+      onDone: () {
+        // When done button is press
+        Navigator.of(context).pushReplacementNamed('/login');
+      },
+//            onSkip: () {
+//              // You can also override onSkip callback
+//            },
+      //showSkipButton: true,
+      //skip: const Icon(Icons.skip_next),
+      next: const Icon(Icons.navigate_next),
+      done: const Text("Done", style: TextStyle(fontWeight: FontWeight.w600)),
+      dotsDecorator: DotsDecorator(
+          size: const Size.square(10.0),
+          activeSize: const Size(20.0, 10.0),
+          activeColor: Theme.of(context).accentColor,
+          color: Colors.black26,
+          spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+          activeShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25.0)
+          )
+      ),
+    );
+  }
+
 }
 

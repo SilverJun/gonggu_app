@@ -1,3 +1,4 @@
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gongguapp/product.dart';
 import 'package:gongguapp/AppData.dart';
 
@@ -11,50 +12,7 @@ import 'package:uuid/uuid.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
 
-String delivery;
 String category;
-
-class DisplayDeliveryWidget extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => DisplayDelivery();
-}
-
-class DisplayDelivery extends State<DisplayDeliveryWidget> {
-  String dropdownValue = "비전관 택배보관함";
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: DropdownButton<String>(
-        value: dropdownValue,
-        icon: Icon(Icons.arrow_drop_down),
-        iconSize: 24,
-        elevation: 16,
-        underline: Container(
-          height: 2,
-        ),
-        onChanged: (String newValue) {
-          setState(() {
-            dropdownValue = newValue;
-            delivery = dropdownValue;
-            //isGrid = newValue=='Grid';
-
-            //context.findAncestorStateOfType<HomePageState>().rebuild();
-          });
-
-          // query and sorting
-        },
-        items: <String>['비전관 택배보관함', '행복관 택배보관함', '뉴턴홀 1층']
-            .map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
 
 class DisplayCategoryWidget extends StatefulWidget {
   @override
@@ -113,6 +71,7 @@ class AddPageState extends State<AddPage> {
   final TextEditingController _goalController = new TextEditingController();
   final TextEditingController _descController = new TextEditingController();
   final TextEditingController _addrController = new TextEditingController();
+  DateTime endTime = DateTime.now();
 
 
   Future getImage() async {
@@ -144,23 +103,22 @@ class AddPageState extends State<AddPage> {
                   String uuid = Uuid().v1();
 
                   Firestore.instance
-                      .collection('product')
-                      .document(uuid)
-                      .setData(// with filename
-                          {
-                    'uuid': uuid,
-                    'creatorUid': appProfile.user.uid,
-                    'name': _nameController.text,
-                    'price': int.parse(_priceController.text),
-                    'objectCount': 100,
-                    'shipAddr': delivery, // TODO : fix it.
-                    'startTime': DateTime.now(),
-                    'endTime': DateTime.now(),
-                    'filename': path.basename(_image.path),
-                    'category': "test category",
-                    'progress': 0.0,
-                    'currentCount': 1,
-                    'desc': _descController.text,
+                    .collection('product')
+                    .document(uuid)
+                    .setData({
+                      'uuid': uuid,
+                      'creatorUid': appProfile.user.uid,
+                      'name': _nameController.text,
+                      'price': int.parse(_priceController.text),
+                      'objectCount': int.parse(_goalController.text),
+                      'shipAddr': _addrController.text,
+                      'startTime': DateTime.now(),
+                      'endTime': endTime,
+                      'filename': path.basename(_image.path),
+                      'category': category,
+                      'progress': 0.0,
+                      'currentCount': 0,
+                      'desc': _descController.text,
                   }).then((value) => Navigator.pop(context));
                 } else {
                   Scaffold.of(context).showSnackBar(SnackBar(
@@ -246,9 +204,7 @@ class AddPageState extends State<AddPage> {
                     SizedBox(
                       height: 8.0,
                     ),
-                    Divider(
-                      thickness: 1.5,
-                    ),
+                    DisplayCategoryWidget(),
                     SizedBox(
                       height: 8.0,
                     ),
@@ -270,8 +226,21 @@ class AddPageState extends State<AddPage> {
                       decoration:
                       InputDecoration(labelText: "물품수령지"),
                     ),
+                    ListTile(
+                      title: Text("공구 마감일"),
 
-                    DisplayCategoryWidget(),
+                      onTap: () {
+                        DatePicker.showDateTimePicker(context, showTitleActions: true,
+                          onChanged: (date) {
+                            //print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+                          },
+                          onConfirm: (date) {
+                            endTime = date;
+                          },
+                          currentTime: endTime, locale: LocaleType.ko
+                        );
+                      },
+                    ),
 
                     //Text(product.desc, style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent)))
                   ],

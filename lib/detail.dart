@@ -231,44 +231,33 @@ class DetailPageState extends State<DetailPage> {
                     decoration: InputDecoration(labelText: "수량"),
                   ),
                   actions: <Widget>[
-                    new FlatButton(
-                      child: new Text('구매하기'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
+                    Builder(
+                      builder: (BuildContext context) {
+                        return new FlatButton(
+                          child: new Text('구매하기'),
+                          onPressed: () async {
+                            await widget.product.reference
+                                .collection('participants')
+                                .document(appProfile.user.uid)
+                                .setData(// with filename
+                                {
+                                  'displayName' : appProfile.user.displayName,
+                                  'phoneNumber' : '010-7777-7777',
+                                  'quantity' : int.parse(_myController.text),
+                                }).then((value) {
+                                  Navigator.pop(context);
+                                });
 
-                        String uuid = Uuid().v1();
-
-                        Firestore.instance
-                            .collection('product')
-                            .document(uuid)
-                            .collection('participants')
-                            .document(appProfile.user.uid)
-                            .setData(// with filename
-                            {
-                              'displayName' : appProfile.user.displayName,
-                              'phoneNumber' : '010-7777-7777',
-                              'quantity' : int.parse(_myController.text),
-//                              'uuid': uuid,
-//                              'creatorUid': appProfile.user.uid,
-//                              'name': widget.product.name,
-//                              'price': int.parse(_priceController.text),
-//                              'objectCount': 100,
-//                              'shipAddr': delivery, // TODO : fix it.
-//                              'startTime': DateTime.now(),
-//                              'endTime': DateTime.now(),
-//                              'filename': path.basename(_image.path),
-//                              'category': "test category",
-//                              'progress': 0.0,
-//                              'currentCount': 1,
-//                              'desc': _descController.text,
-                            }).then((value) => Navigator.pop(context));
-                      },
+                            Scaffold.of(context).showSnackBar(SnackBar(content: Text('성공적으로 구매했습니다!'),)); // TODO : snack bar doesn't show.
+                          },
+                        );
+                      }
                     )
                   ],
                 );
               });
         },
-        icon: Icon(Icons.open_with),
+        icon: Icon(Icons.shopping_cart),
       ),
     );
   }

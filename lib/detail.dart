@@ -1,6 +1,6 @@
-
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:gongguapp/product.dart';
 import 'package:gongguapp/AppData.dart';
 
@@ -21,10 +21,10 @@ class DetailPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => DetailPageState();
-
 }
 
 class DetailPageState extends State<DetailPage> {
+  final _myController = TextEditingController();
 
   Widget _buildDetailPage(BuildContext context, Product product) {
     //final product = Product.fromSnapshot(snapshot);
@@ -32,66 +32,111 @@ class DetailPageState extends State<DetailPage> {
 
     return ListView(
       children: <Widget>[
-        Column(
-          children: <Widget>[
-            FutureBuilder(
+        Column(children: <Widget>[
+          FutureBuilder(
               future: getImageURL(product.filename),
               builder: (context, AsyncSnapshot<String> value) {
                 return Image.network(
-                  value.hasData ? value.data : "http://handong.edu/site/handong/res/img/logo.png",
+                  value.hasData
+                      ? value.data
+                      : "http://handong.edu/site/handong/res/img/logo.png",
                   width: MediaQuery.of(context).size.width,
                   fit: BoxFit.cover,
                 );
-              }
-            ),
-          ]
-        ),
+              }),
+        ]),
         Padding(
           padding: EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(product.name, style: Theme.of(context).textTheme.headline5.merge(TextStyle(fontWeight: FontWeight.bold)),),
-              SizedBox(height: 8.0,),
+              Text(
+                product.name,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5
+                    .merge(TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
               //
               // 공구 진행자
-              Builder(
-                builder: (context) {
-                  return FutureBuilder(
-                      future: Firestore.instance.collection('users').document(product.creatorUid).get(),
-                      builder: (context, AsyncSnapshot<DocumentSnapshot> value) {
-                        return Row(
-                          children: <Widget>[
-                            Container(
-                                width: 30,
-                                height: 30,
-                                child: CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: value.hasData ? NetworkImage(value.data['photoUrl']) : null,
-                                  backgroundColor: Colors.grey,
-                                ),
+              Builder(builder: (context) {
+                return FutureBuilder(
+                    future: Firestore.instance
+                        .collection('users')
+                        .document(product.creatorUid)
+                        .get(),
+                    builder: (context, AsyncSnapshot<DocumentSnapshot> value) {
+                      return Row(
+                        children: <Widget>[
+                          Container(
+                            width: 30,
+                            height: 30,
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage: value.hasData
+                                  ? NetworkImage(value.data['photoUrl'])
+                                  : null,
+                              backgroundColor: Colors.grey,
                             ),
-                            SizedBox(width: 8,),
-                            Text(value.hasData ? value.data['displayName']+' >' : ''),
-                          ],
-                        );
-                      }
-                  );
-                }
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(value.hasData
+                              ? value.data['displayName'] + ' >'
+                              : ''),
+                        ],
+                      );
+                    });
+              }),
+              SizedBox(
+                height: 8.0,
               ),
-              SizedBox(height: 8.0,),
-              Text(product.price.toString()+'원', style: Theme.of(context).textTheme.headline5.merge(TextStyle(fontWeight: FontWeight.bold))),
-              SizedBox(height: 8.0,),
-              Divider(thickness: 1.5,),
-              ListTile(leading: Text("목표수량"), title: Text(product.objectCount.toString()),),
-              Divider(thickness: 1.5,),
-              ListTile(leading: Text("배송지"), title: Text(product.shipAddr),),
-              Divider(thickness: 1.5,),
-              ListTile(leading: Text("마감일"), title: Text(product.endTime.toDate().toString()),),
-              Divider(thickness: 1.5,),
-              ListTile(leading: Text("카테고리"), title: Text(product.category),),
-              Divider(thickness: 1.5,),
-              SizedBox(height: 8.0,),
+              Text(product.price.toString() + '원',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5
+                      .merge(TextStyle(fontWeight: FontWeight.bold))),
+              SizedBox(
+                height: 8.0,
+              ),
+              Divider(
+                thickness: 1.5,
+              ),
+              ListTile(
+                leading: Text("목표수량"),
+                title: Text(product.objectCount.toString()),
+              ),
+              Divider(
+                thickness: 1.5,
+              ),
+              ListTile(
+                leading: Text("배송지"),
+                title: Text(product.shipAddr),
+              ),
+              Divider(
+                thickness: 1.5,
+              ),
+              ListTile(
+                leading: Text("마감일"),
+                title: Text(product.endTime.toDate().toString()),
+              ),
+              Divider(
+                thickness: 1.5,
+              ),
+              ListTile(
+                leading: Text("카테고리"),
+                title: Text(product.category),
+              ),
+              Divider(
+                thickness: 1.5,
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
 
               Text(product.desc, style: Theme.of(context).textTheme.bodyText1),
             ],
@@ -107,56 +152,124 @@ class DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         title: Text('Detail'),
         actions: <Widget>[
-          Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: Icon(
-                  Icons.edit,
-                  semanticLabel: 'edit',
-                ),
-                onPressed: () {
-                  if (widget.product.creatorUid == appProfile.user.uid) { // can edit
-                    print("Can edit!");
-                    Navigator.push(context, MaterialPageRoute(fullscreenDialog: true, builder: (context) => EditPagePopup(product: widget.product)));
-                  }
-                  else {                //can't edit
-                    Scaffold.of(context).showSnackBar(SnackBar(content: Text("You don't have permission to edit this product."),));
-                  }
-                },
-              );
-            }
-          ),
-          Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: Icon(
-                  Icons.delete,
-                  semanticLabel: 'delete',
-                ),
-                onPressed: () async {
-                  if (widget.product.creatorUid == appProfile.user.uid) { // can delete
-                    print("Can delete!");
-                    await Firestore.instance.collection('product').document(widget.product.uuid).delete();
-                    Navigator.pop(context);
-                  }
-                  else { //can't edit
-                    Scaffold.of(context).showSnackBar(SnackBar(content: Text("You don't have permission to delete this product.")));
-                  }
-                },
-              );
-            }
-          ),
+          Builder(builder: (BuildContext context) {
+            return IconButton(
+              icon: Icon(
+                Icons.edit,
+                semanticLabel: 'edit',
+              ),
+              onPressed: () {
+                if (widget.product.creatorUid == appProfile.user.uid) {
+                  // can edit
+                  print("Can edit!");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context) =>
+                              EditPagePopup(product: widget.product)));
+                } else {
+                  //can't edit
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content:
+                        Text("You don't have permission to edit this product."),
+                  ));
+                }
+              },
+            );
+          }),
+          Builder(builder: (BuildContext context) {
+            return IconButton(
+              icon: Icon(
+                Icons.delete,
+                semanticLabel: 'delete',
+              ),
+              onPressed: () async {
+                if (widget.product.creatorUid == appProfile.user.uid) {
+                  // can delete
+                  print("Can delete!");
+                  await Firestore.instance
+                      .collection('product')
+                      .document(widget.product.uuid)
+                      .delete();
+                  Navigator.pop(context);
+                } else {
+                  //can't edit
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          "You don't have permission to delete this product.")));
+                }
+              },
+            );
+          }),
         ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
-        stream: Firestore.instance.collection('product').document(widget.product.reference.documentID).snapshots(),
-        builder: (context, snapshot) {
-          //print(snapshot);
-          if (!snapshot.hasData) return _buildDetailPage(context, widget.product);
-          widget.product = Product.fromSnapshot(snapshot.data);
-          return _buildDetailPage(context, widget.product);
-        }
-      )
+          stream: Firestore.instance
+              .collection('product')
+              .document(widget.product.reference.documentID)
+              .snapshots(),
+          builder: (context, snapshot) {
+            //print(snapshot);
+            if (!snapshot.hasData)
+              return _buildDetailPage(context, widget.product);
+            widget.product = Product.fromSnapshot(snapshot.data);
+            return _buildDetailPage(context, widget.product);
+          }),
+      floatingActionButton: FloatingActionButton.extended(
+        label: Text("Click me"),
+        onPressed: () {
+          return showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  // myController의 현재 텍스트 값을 컨텐트로 AlertDialog 출력
+                  title: Text(widget.product.name),
+                  content: TextField(
+                    keyboardType: TextInputType.number,
+                    controller: _myController,
+                    decoration: InputDecoration(labelText: "수량"),
+                  ),
+                  actions: <Widget>[
+                    new FlatButton(
+                      child: new Text('구매하기'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+
+                        String uuid = Uuid().v1();
+
+                        Firestore.instance
+                            .collection('product')
+                            .document(uuid)
+                            .collection('participants')
+                            .document(appProfile.user.uid)
+                            .setData(// with filename
+                            {
+                              'displayName' : appProfile.user.displayName,
+                              'phoneNumber' : '010-7777-7777',
+                              'quantity' : int.parse(_myController.text),
+//                              'uuid': uuid,
+//                              'creatorUid': appProfile.user.uid,
+//                              'name': widget.product.name,
+//                              'price': int.parse(_priceController.text),
+//                              'objectCount': 100,
+//                              'shipAddr': delivery, // TODO : fix it.
+//                              'startTime': DateTime.now(),
+//                              'endTime': DateTime.now(),
+//                              'filename': path.basename(_image.path),
+//                              'category': "test category",
+//                              'progress': 0.0,
+//                              'currentCount': 1,
+//                              'desc': _descController.text,
+                            }).then((value) => Navigator.pop(context));
+                      },
+                    )
+                  ],
+                );
+              });
+        },
+        icon: Icon(Icons.open_with),
+      ),
     );
   }
 }
@@ -167,11 +280,9 @@ class EditPagePopup extends StatefulWidget {
   EditPagePopup({this.product});
   @override
   State<StatefulWidget> createState() => EditPagePopupState();
-
 }
 
 class EditPagePopupState extends State<EditPagePopup> {
-
   File _image;
   final TextEditingController _nameController = new TextEditingController();
   final TextEditingController _priceController = new TextEditingController();
@@ -184,6 +295,7 @@ class EditPagePopupState extends State<EditPagePopup> {
       _image = image;
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -195,117 +307,140 @@ class EditPagePopupState extends State<EditPagePopup> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Edit'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text("save", style: TextStyle(fontSize: 20.0, color: Colors.white),),
-              onPressed: () async {
-                // firestore save image
-                if (_image != null) {
-                  await storage.ref().child("images").child(widget.product.filename).delete(); // delete
-                  await uploadImage(_image); // upload
-                  //print(path.basename(_image.path));
-                  widget.product.reference.updateData( // with filename
-                  {
-                    'name': _nameController.text,
-                    'price': int.parse(_priceController.text),
-                    'desc': _descController.text,
-                    'filename': path.basename(_image.path),
-                    'modified': FieldValue.serverTimestamp()
-                  }).then((value) => Navigator.pop(context));
-                }
-                else {
-                  widget.product.reference.updateData( // without filename
-                  {
-                    'name': _nameController.text,
-                    'price': int.parse(_priceController.text),
-                    'desc': _descController.text,
-                    'modified': FieldValue.serverTimestamp()
-                  }).then((value) => Navigator.pop(context));
-                }
+      appBar: AppBar(
+        title: Text('Edit'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              "save",
+              style: TextStyle(fontSize: 20.0, color: Colors.white),
+            ),
+            onPressed: () async {
+              // firestore save image
+              if (_image != null) {
+                await storage
+                    .ref()
+                    .child("images")
+                    .child(widget.product.filename)
+                    .delete(); // delete
+                await uploadImage(_image); // upload
+                //print(path.basename(_image.path));
+                widget.product.reference.updateData(// with filename
+                    {
+                  'name': _nameController.text,
+                  'price': int.parse(_priceController.text),
+                  'desc': _descController.text,
+                  'filename': path.basename(_image.path),
+                  'modified': FieldValue.serverTimestamp()
+                }).then((value) => Navigator.pop(context));
+              } else {
+                widget.product.reference.updateData(// without filename
+                    {
+                  'name': _nameController.text,
+                  'price': int.parse(_priceController.text),
+                  'desc': _descController.text,
+                  'modified': FieldValue.serverTimestamp()
+                }).then((value) => Navigator.pop(context));
+              }
+            },
+          )
+        ],
+      ),
+      body: Builder(
+        builder: (context) {
+          //final product = widget.product;
+          final NumberFormat formatter = NumberFormat.simpleCurrency(
+              locale: Localizations.localeOf(context).toString());
 
-              },
-            )
-          ],
-        ),
-        body: Builder(
-          builder: (context) {
-            //final product = widget.product;
-            final NumberFormat formatter = NumberFormat.simpleCurrency(
-                locale: Localizations.localeOf(context).toString());
-
-            return ListView(
-              children: <Widget>[
-                Column(
+          return ListView(
+            children: <Widget>[
+              Column(children: <Widget>[
+                _image != null
+                    ? Image.file(
+                        _image,
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
+                      )
+                    : FutureBuilder(
+                        future: getImageURL(widget.product.filename),
+                        builder: (context, AsyncSnapshot<String> value) {
+                          return Image.network(
+                            value.hasData
+                                ? value.data
+                                : "http://handong.edu/site/handong/res/img/logo.png",
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                          );
+                        }),
+              ]),
+              Padding(
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    _image != null ?
-                    Image.file(
-                      _image,
-                      width: MediaQuery.of(context).size.width,
-                      fit: BoxFit.cover,
-                    ) :
-                    FutureBuilder(
-                      future: getImageURL(widget.product.filename),
-                      builder: (context, AsyncSnapshot<String> value) {
-                        return Image.network(
-                          value.hasData ? value.data : "http://handong.edu/site/handong/res/img/logo.png",
-                          width: MediaQuery.of(context).size.width,
-                          fit: BoxFit.cover,
-                        );
-                      }
+                    Container(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(Icons.photo_camera),
+                        onPressed: () async {
+                          // image picker
+                          await getImage();
+                        },
+                      ),
                     ),
-                  ]
-                ),
-                Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: IconButton(
-                          icon: Icon(Icons.photo_camera),
-                          onPressed: () async {
-                            // image picker
-                            await getImage();
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 8.0,),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                TextField(controller:_nameController,),
-                                //Text(product.name, style: Theme.of(context).textTheme.headline5.merge(TextStyle(color: Color.fromRGBO(42, 88, 149, 1.0), fontWeight: FontWeight.bold)),),
-                                SizedBox(height: 12.0,),
-                                TextField(controller:_priceController, keyboardType: TextInputType.number, inputFormatters: <TextInputFormatter>[WhitelistingTextInputFormatter.digitsOnly],),
-                                //Text(formatter.format(product.price), style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent))),
-                                SizedBox(height: 12.0,),
-                              ],
-                            ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              TextField(
+                                controller: _nameController,
+                              ),
+                              //Text(product.name, style: Theme.of(context).textTheme.headline5.merge(TextStyle(color: Color.fromRGBO(42, 88, 149, 1.0), fontWeight: FontWeight.bold)),),
+                              SizedBox(
+                                height: 12.0,
+                              ),
+                              TextField(
+                                controller: _priceController,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: <TextInputFormatter>[
+                                  WhitelistingTextInputFormatter.digitsOnly
+                                ],
+                              ),
+                              //Text(formatter.format(product.price), style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent))),
+                              SizedBox(
+                                height: 12.0,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 8.0,),
-                      Divider(thickness: 1.5,),
-                      SizedBox(height: 8.0,),
-                      TextField(controller: _descController,),
-                      //Text(product.desc, style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent)))
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Divider(
+                      thickness: 1.5,
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    TextField(
+                      controller: _descController,
+                    ),
+                    //Text(product.desc, style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent)))
+                  ],
                 ),
-
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
-
 }

@@ -24,7 +24,9 @@ class DetailPage extends StatefulWidget {
 }
 
 class DetailPageState extends State<DetailPage> {
-  final _myController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _quantityController = TextEditingController();
+  final _phoneController = TextEditingController();
 
   Widget _buildDetailPage(BuildContext context, Product product) {
     //final product = Product.fromSnapshot(snapshot);
@@ -217,18 +219,32 @@ class DetailPageState extends State<DetailPage> {
             return _buildDetailPage(context, widget.product);
           }),
       floatingActionButton: FloatingActionButton.extended(
-        label: Text("Click me"),
+        label: Text("Buy"),
         onPressed: () {
           return showDialog(
               context: context,
               builder: (context) {
                 return AlertDialog(
                   // myController의 현재 텍스트 값을 컨텐트로 AlertDialog 출력
-                  title: Text(widget.product.name),
-                  content: TextField(
-                    keyboardType: TextInputType.number,
-                    controller: _myController,
-                    decoration: InputDecoration(labelText: "수량"),
+                  title: Text('구매 정보'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: _nameController,
+                        decoration: InputDecoration(labelText: "구매자 성함"),
+                      ),
+                      TextField(
+                        keyboardType: TextInputType.number,
+                        controller: _quantityController,
+                        decoration: InputDecoration(labelText: "수량"),
+                      ),
+                      TextField(
+                        keyboardType: TextInputType.number,
+                        controller: _phoneController,
+                        decoration: InputDecoration(labelText: "휴대전화"),
+                      ),
+                    ]
                   ),
                   actions: <Widget>[
                     Builder(
@@ -236,18 +252,22 @@ class DetailPageState extends State<DetailPage> {
                         return new FlatButton(
                           child: new Text('구매하기'),
                           onPressed: () async {
+                            _nameController.text = appProfile.user.displayName;
+                            _phoneController.text = appProfile.user.phoneNumber;
+                            var _quantity = int.parse(_quantityController.text);
                             await widget.product.reference
                                 .collection('participants')
                                 .document(appProfile.user.uid)
                                 .setData(// with filename
                                 {
-                                  'displayName' : appProfile.user.displayName,
-                                  'phoneNumber' : '010-7777-7777',
-                                  'quantity' : int.parse(_myController.text),
+                                  'displayName' : _nameController.text,
+                                  'phoneNumber' : _phoneController.text,
+                                  'quantity' : _quantity,
                                 }).then((value) {
                                   Navigator.pop(context);
                                 });
-
+                            await widget.product.reference.updateData({'currentCount': FieldValue.increment(int.parse(_quantityController.text))}); // 구매수량 업데이트
+                            await widget.product.reference.updateData({'progress': _quantity/widget.product.objectCount as double}); // 프로그레스 업데이트
                             Scaffold.of(context).showSnackBar(SnackBar(content: Text('성공적으로 구매했습니다!'),)); // TODO : snack bar doesn't show.
                           },
                         );

@@ -77,7 +77,8 @@ flutter:
   fonts:
    - family: Hippy
      fonts:
-       - asset: fonts/hippy.ttf
+       - asset: fonts/NanumSquareRoundB.ttf
+
 
   #   - family: Trajan Pro
   #     fonts:

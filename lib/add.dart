@@ -3,6 +3,7 @@ import 'package:gongguapp/product.dart';
 import 'package:gongguapp/AppData.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -77,9 +78,20 @@ class AddPageState extends State<AddPage> {
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
+    final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFile(image);
+    final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
+    final List<ImageLabel> labels = await labeler.processImage(visionImage);
+
+    String text = '';
+
+    if (labels.isNotEmpty)
+      text = labels.reduce((curr, next) => curr.confidence > next.confidence ? curr: next).text;
+
     setState(() {
       _image = image;
+      _nameController.text = text;
     });
+    labeler.close();
   }
 
   @override

@@ -316,6 +316,7 @@ class HomePageState extends State<HomePage> {
           Container(
             child: _buildBody(context)
           ),
+          SizedBox(height: 32.0,),
         ]
       ),
       resizeToAvoidBottomInset: false,

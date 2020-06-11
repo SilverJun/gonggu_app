@@ -41,9 +41,11 @@ class ProfilePageState extends State<ProfilePage> {
                   children: [
                     Text("진행도: "),
                     Flexible(
-                        child: LinearProgressIndicator(
-                      value: product.progress,
-                    )),
+                      child: LinearProgressIndicator(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        value: product.progress,
+                      )
+                    ),
                   ],
                 ),
               ),

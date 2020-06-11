@@ -190,40 +190,43 @@ class HomePageState extends State<HomePage> {
     final Product product = Product.fromSnapshot(data);
     final ThemeData theme = Theme.of(context);
 
-    return ListTile(
-      leading: FutureBuilder(
-        future: getImageURL(data['filename']),
-        builder: (context, AsyncSnapshot<String> value) {
-          return Image.network(
-            value.hasData ? value.data : "http://handong.edu/site/handong/res/img/logo.png",
-            fit: BoxFit.fitHeight,
-          );
-        }
-      ),
-      title: Text(product.name,style: theme.textTheme.bodyText1,),
-      subtitle: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("공구가: ₩"+product.price.toString(),style: theme.textTheme.bodyText2,),
-            Row(
-              children: [
-                Text("진행도: "),
-                Flexible(child: LinearProgressIndicator(value: product.progress,)),
-              ],
-            )
-          ],
+    return Container(
+      margin: EdgeInsets.all(8.0),
+      child: ListTile(
+        leading: FutureBuilder(
+          future: getImageURL(data['filename']),
+          builder: (context, AsyncSnapshot<String> value) {
+            return Image.network(
+              value.hasData ? value.data : "http://handong.edu/site/handong/res/img/logo.png",
+              fit: BoxFit.fitHeight,
+            );
+          }
         ),
-      ),
-      trailing: IconButton(
-        icon: Icon(Icons.favorite_border),
-        onPressed: () {
-          // TODO : favorite page 만들기.
+        title: Text(product.name,style: theme.textTheme.bodyText1,),
+        subtitle: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("공구가: ₩"+product.price.toString(),style: theme.textTheme.bodyText2,),
+              Row(
+                children: [
+                  Text("진행도: "),
+                  Flexible(child: LinearProgressIndicator(backgroundColor: theme.primaryColor, value: product.progress,)),
+                ],
+              )
+            ],
+          ),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.favorite_border),
+          onPressed: () {
+            // TODO : favorite page 만들기.
+          },
+        ),
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(product: product,)));
         },
       ),
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(product: product,)));
-      },
     );
   }
 

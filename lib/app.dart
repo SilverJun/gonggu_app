@@ -25,7 +25,10 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Final Test',
       //home: LoginPage(),
-      theme: ThemeData(primaryColor: Color.fromARGB(255,237,98,96), accentColor:Color.fromARGB(255,240,142,125) ,fontFamily: 'Hippy'),
+      theme: ThemeData(primaryColor: Color.fromARGB(255,237,98,96),
+          primaryColorLight: Color.fromARGB(255,240,142,125),
+          hintColor: Color.fromARGB(255,245,186,160) ,
+          accentColor:Color.fromARGB(255,148,203,194) ,fontFamily: 'Hippy'),
       initialRoute: '/onboarding',
       routes: {
         '/onboarding' : (context) => OnboardingPage(),

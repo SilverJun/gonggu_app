@@ -27,11 +27,25 @@ class ProgressPage extends StatefulWidget {
 }
 
 class ProgressPageState extends State<ProgressPage> {
+  List<DocumentSnapshot> docs = null;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('공구 현황'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.message),
+            onPressed: () {
+              var str = 'sms://open?addresses=';
+              str += (docs.map((e) => e.data['phoneNumber']).join(",")).replaceAll('-', '');
+              str += ('&body=GongguTongMMS');
+              print(str);
+              launch(str);
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -53,8 +67,8 @@ class ProgressPageState extends State<ProgressPage> {
                 customWidths: CustomSliderWidths(progressBarWidth: 10)
               ),
               min: 0,
-              max: widget.product.objectCount.toDouble(),
-              initialValue: widget.product.currentCount.toDouble(),
+              max: 100,
+              initialValue: widget.product.progress*100,
             ),
 
             Center(child: Text('현재 수량 / 목표수량')),
@@ -70,11 +84,12 @@ class ProgressPageState extends State<ProgressPage> {
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) return Container(padding: EdgeInsets.symmetric(vertical: 8.0), child: LinearProgressIndicator());
 
+                docs = snapshot.data.documents;
                 return Column(
                   children: snapshot.data.documents.map(
                     (e) => ListTile(
                       title: Text(e.data['displayName']),
-                      trailing: Row(mainAxisSize: MainAxisSize.min, children: [Text(e.data['quantity'].toString()+'개'), Icon(Icons.navigate_next)]),
+                      trailing: Row(mainAxisSize: MainAxisSize.min, children: [Text(e.data['quantity'].toString()+'개'), Icon(e.data['check']?Icons.check:Icons.navigate_next)]),
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => ParticipationDetailPage(documentSnapshot: e)));
                       },
@@ -125,6 +140,15 @@ class ParticipationDetailPage extends StatelessWidget {
           ListTile(
             leading: Text('전화번호'),
             title: Text(documentSnapshot.data['phoneNumber']??''),
+          ),
+          Divider(),
+          ListTile(
+            leading: Text('입금여부'),
+            title: Text(documentSnapshot.data['check'].toString()),
+            onTap: () async {
+              documentSnapshot.reference.updateData({'check' : !documentSnapshot.data['check']});
+              Navigator.pop(context);
+            },
           ),
         ],
       ),

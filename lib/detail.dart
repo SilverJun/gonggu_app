@@ -109,6 +109,13 @@ class DetailPageState extends State<DetailPage> {
                 thickness: 1.5,
               ),
               ListTile(
+                leading: Text("구매수량"),
+                title: Text(product.currentCount.toString()),
+              ),
+              Divider(
+                thickness: 1.5,
+              ),
+              ListTile(
                 leading: Text("목표수량"),
                 title: Text(product.objectCount.toString()),
               ),
@@ -194,11 +201,11 @@ class DetailPageState extends State<DetailPage> {
                 if (widget.product.creatorUid == appProfile.user.uid) {
                   // can delete
                   print("Can delete!");
-                  await Firestore.instance
+                  Navigator.pop(context);
+                  Firestore.instance
                       .collection('product')
                       .document(widget.product.uuid)
                       .delete();
-                  Navigator.pop(context);
                 } else {
                   //can't edit
                   Scaffold.of(context).showSnackBar(SnackBar(
@@ -225,6 +232,8 @@ class DetailPageState extends State<DetailPage> {
       floatingActionButton: FloatingActionButton.extended(
         label: Text("Buy"),
         onPressed: () {
+          _nameController.text = appProfile.user.displayName;
+          _phoneController.text = appProfile.user.phoneNumber;
           return showDialog(
               context: context,
               builder: (context) {
@@ -252,31 +261,31 @@ class DetailPageState extends State<DetailPage> {
                       return new FlatButton(
                         child: new Text('구매하기'),
                         onPressed: () async {
-                          _nameController.text = appProfile.user.displayName;
-                          _phoneController.text = appProfile.user.phoneNumber;
                           var _quantity = int.parse(_quantityController.text);
                           await widget.product.reference
-                              .collection('participants')
-                              .document(appProfile.user.uid)
-                              .setData(// with filename
-                                  {
-                            'displayName': _nameController.text,
-                            'phoneNumber': _phoneController.text,
-                            'quantity': _quantity,
+                            .collection('participants')
+                            .document(appProfile.user.uid)
+                            .setData({// with filename
+                              'displayName': _nameController.text,
+                              'phoneNumber': _phoneController.text,
+                              'quantity': _quantity,
+                              'check': false,
                           }).then((value) {
                             Navigator.pop(context);
                           });
+                          _quantity = widget.product.currentCount + _quantity;
                           await widget.product.reference.updateData({
+                            'participants' : FieldValue.arrayUnion([appProfile.user.uid]),
                             'currentCount': FieldValue.increment(
                                 int.parse(_quantityController.text))
                           }); // 구매수량 업데이트
                           await widget.product.reference.updateData({
-                            'progress':
-                                _quantity / widget.product.objectCount as double
+                            'progress': _quantity / widget.product.objectCount as double
                           }); // 프로그레스 업데이트
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text('성공적으로 구매했습니다!'),
-                          )); // TODO : snack bar doesn't show.
+                          print(widget.product.objectCount);
+//                          Scaffold.of(context).showSnackBar(SnackBar(
+//                            content: Text('성공적으로 구매했습니다!'),
+//                          )); // TODO : snack bar doesn't show.
                         },
                       );
                     })

@@ -65,6 +65,53 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _buildParticipatedProduct(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance
+          .collectionGroup('product')
+          .where('participants', arrayContains: appProfile.user.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        //print(snapshot);
+        if (!snapshot.hasData) return CircularProgressIndicator();
+        //print(snapshot.data.documents.asMap());
+
+        return ExpansionTile(
+          title: Text("내가 참여한 공구"),
+          children: snapshot.data.documents.map((e) {
+            //print(e.data);
+            Product product = Product.fromSnapshot(e);
+            return ListTile(
+              title: Text(product.name),
+              subtitle: Container(
+                child: Row(
+                  children: [
+                    Text("진행도: "),
+                    Flexible(
+                        child: LinearProgressIndicator(
+                          backgroundColor: Theme.of(context).hintColor,
+                          value: product.progress,
+                        )
+                    ),
+                  ],
+                ),
+              ),
+//              trailing: Icon(Icons.navigate_next),
+//              onTap: () {
+//                Navigator.push(
+//                    context,
+//                    MaterialPageRoute(
+//                        builder: (context) => ProgressPage(
+//                          product: product,
+//                        )));
+//              },
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //print(appProfile.user.phoneNumber==null);
@@ -153,6 +200,7 @@ class ProfilePageState extends State<ProfilePage> {
 //              title: Text(bankAccount),
 //            ),
               _buildCreatedProduct(context),
+              _buildParticipatedProduct(context),
             ],
           ),
         ));

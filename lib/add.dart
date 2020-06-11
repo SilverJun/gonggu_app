@@ -223,7 +223,7 @@ class AddPageState extends State<AddPage> {
                     TextField(
                       controller: _descController,
                       decoration:
-                      InputDecoration(labelText: "Descriptoin"),
+                      InputDecoration(labelText: "Description"),
                     ),
                     TextField(
                       controller: _goalController,
@@ -239,9 +239,16 @@ class AddPageState extends State<AddPage> {
                       InputDecoration(labelText: "물품수령지"),
                     ),
                     ListTile(
-                      leading: Icon(Icons.date_range),
-                      title: Text("공구 마감일"),
-
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children:[
+                          Icon(Icons.date_range),
+                          SizedBox(width: 8.0,),
+                          Text("마감일")
+                        ]),
+                      trailing: Text(endTime.toString()),
                       onTap: () {
                         DatePicker.showDateTimePicker(context, showTitleActions: true,
                           onChanged: (date) {

@@ -42,7 +42,7 @@ class ProfilePageState extends State<ProfilePage> {
                     Text("진행도: "),
                     Flexible(
                       child: LinearProgressIndicator(
-                        backgroundColor: Theme.of(context).primaryColor,
+                        backgroundColor: Theme.of(context).hintColor,
                         value: product.progress,
                       )
                     ),

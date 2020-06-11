@@ -211,7 +211,7 @@ class HomePageState extends State<HomePage> {
               Row(
                 children: [
                   Text("진행도: "),
-                  Flexible(child: LinearProgressIndicator(backgroundColor: theme.primaryColor, value: product.progress,)),
+                  Flexible(child: LinearProgressIndicator(backgroundColor: theme.hintColor, value: product.progress,)),
                 ],
               )
             ],
@@ -247,23 +247,23 @@ class HomePageState extends State<HomePage> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(width: 8,),
                     Container(
-                      width: 100,
-                      height: 100,
+                      width: 80,
+                      height: 80,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           image: DecorationImage(
                             image: NetworkImage(appProfile.user.photoUrl),
                             fit: BoxFit.cover,
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(50.0),),
+                          borderRadius: BorderRadius.all(Radius.circular(40.0),),
                           border: Border.all(
                               color : Theme.of(context).accentColor,
-                              width: 3
+                              width: 2
                           )
                       ),
                     ),
+                    SizedBox(width: 8,),
                     Expanded(
                       child: Padding(
                         padding: EdgeInsets.only(left: 16.0),
@@ -271,9 +271,12 @@ class HomePageState extends State<HomePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
+                            SizedBox(
+                              height: 30,
+                            ),
                             Text(
                               '안녕하세요,',
-                              style: Theme.of(context).textTheme.headline5.merge(TextStyle(color: Colors.white)),
+                              style: Theme.of(context).textTheme.headline5.merge(TextStyle(color: Colors.white, fontSize: 15)),
                               textAlign: TextAlign.left,
                             ),
                             SizedBox(

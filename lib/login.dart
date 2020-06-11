@@ -164,7 +164,10 @@ class _LoginPageState extends State<LoginPage> {
             Text('당신의 슬기로운 공구생활', style: TextStyle(color: Colors.white, fontSize:20, fontFamily: "Hippy"),),
             SizedBox(height: 8.0),
             Text('공구통', style: TextStyle(color: Colors.white, fontSize: 72, fontFamily: "Hippy"),),
-            SizedBox(height: 120.0),
+            SizedBox(height: 40.0),
+            Image.asset("images/jangbaguni.png", height: 175.0),
+            SizedBox(height: 30.0),
+
 
             StreamBuilder(
               stream: FirebaseAuth.instance.onAuthStateChanged,

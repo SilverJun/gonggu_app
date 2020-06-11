@@ -96,63 +96,53 @@ class ProfilePageState extends State<ProfilePage> {
           padding: EdgeInsets.all(16.0),
           child: ListView(
             children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(3.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(width: 8,),
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            image: DecorationImage(
-                                image: NetworkImage(appProfile.user.photoUrl),
-                                fit: BoxFit.cover,
-                            ),
-                          borderRadius: BorderRadius.all(Radius.circular(50.0),),
-                          border: Border.all(
-                            color : theme.accentColor,
-                            width: 3
-                          )
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(width: 8,),
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        image: DecorationImage(
+                            image: NetworkImage(appProfile.user.photoUrl),
+                            fit: BoxFit.cover,
                         ),
-                      ),
-//                      Image.network(
-//                        appProfile.user.photoUrl,
-//                        alignment: Alignment.topCenter,
-//                        height: 120,
-//                      ),
-                      //SizedBox(height: 16.0),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(0),
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                appProfile.user.displayName + '님',
-                                style: Theme.of(context).textTheme.headline5,
-                                textAlign: TextAlign.left,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(appProfile.user.email),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('휴대전화 :' + phone),
-                            ],
-                          ),
-                        ),
+                      borderRadius: BorderRadius.all(Radius.circular(50.0),),
+                      border: Border.all(
+                        color : theme.accentColor,
+                        width: 3
                       )
-                    ],
+                    ),
                   ),
-                ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(0),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            appProfile.user.displayName + '님',
+                            style: Theme.of(context).textTheme.headline5,
+                            textAlign: TextAlign.left,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(appProfile.user.email),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text('휴대전화 :' + phone),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
               Divider(),
 

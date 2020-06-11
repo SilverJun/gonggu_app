@@ -116,7 +116,7 @@ class DetailPageState extends State<DetailPage> {
                 thickness: 1.5,
               ),
               ListTile(
-                leading: Text("배송지"),
+                leading: Text("물품 수령지"),
                 title: Text(product.shipAddr),
               ),
               Divider(

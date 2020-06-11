@@ -144,11 +144,14 @@ class ParticipationDetailPage extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Text('입금여부'),
-            title: Text(documentSnapshot.data['check'].toString()),
-            onTap: () async {
-              documentSnapshot.reference.updateData({'check' : !documentSnapshot.data['check']});
-              Navigator.pop(context);
-            },
+            title: Text(documentSnapshot.data['check'] ? "입금 완료" : "입금 하지 않음"),
+            trailing: Switch(
+              value: documentSnapshot.data['check'],
+              onChanged: (value) {
+                documentSnapshot.reference.updateData({'check' : value});
+                Navigator.pop(context);
+              },
+            ),
           ),
         ],
       ),

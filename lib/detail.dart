@@ -138,7 +138,8 @@ class DetailPageState extends State<DetailPage> {
               ),
               ListTile(
                 leading: Text("상세설명"),
-                title: Text(product.desc,style: Theme.of(context).textTheme.bodyText1),
+                title: Text(product.desc,
+                    style: Theme.of(context).textTheme.bodyText1),
               ),
               SizedBox(
                 height: 45.0,
@@ -230,52 +231,55 @@ class DetailPageState extends State<DetailPage> {
                 return AlertDialog(
                   // myController의 현재 텍스트 값을 컨텐트로 AlertDialog 출력
                   title: Text('구매 정보'),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: _nameController,
-                        decoration: InputDecoration(labelText: "구매자 성함"),
-                      ),
-                      TextField(
-                        keyboardType: TextInputType.number,
-                        controller: _quantityController,
-                        decoration: InputDecoration(labelText: "수량"),
-                      ),
-                      TextField(
-                        keyboardType: TextInputType.number,
-                        controller: _phoneController,
-                        decoration: InputDecoration(labelText: "휴대전화"),
-                      ),
-                    ]
-                  ),
+                  content: Column(mainAxisSize: MainAxisSize.min, children: [
+                    TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(labelText: "구매자 성함"),
+                    ),
+                    TextField(
+                      keyboardType: TextInputType.number,
+                      controller: _quantityController,
+                      decoration: InputDecoration(labelText: "수량"),
+                    ),
+                    TextField(
+                      keyboardType: TextInputType.number,
+                      controller: _phoneController,
+                      decoration: InputDecoration(labelText: "휴대전화"),
+                    ),
+                  ]),
                   actions: <Widget>[
-                    Builder(
-                      builder: (BuildContext context) {
-                        return new FlatButton(
-                          child: new Text('구매하기'),
-                          onPressed: () async {
-                            _nameController.text = appProfile.user.displayName;
-                            _phoneController.text = appProfile.user.phoneNumber;
-                            var _quantity = int.parse(_quantityController.text);
-                            await widget.product.reference
-                                .collection('participants')
-                                .document(appProfile.user.uid)
-                                .setData(// with filename
-                                {
-                                  'displayName' : _nameController.text,
-                                  'phoneNumber' : _phoneController.text,
-                                  'quantity' : _quantity,
-                                }).then((value) {
-                                  Navigator.pop(context);
-                                });
-                            await widget.product.reference.updateData({'currentCount': FieldValue.increment(int.parse(_quantityController.text))}); // 구매수량 업데이트
-                            await widget.product.reference.updateData({'progress': _quantity/widget.product.objectCount as double}); // 프로그레스 업데이트
-                            Scaffold.of(context).showSnackBar(SnackBar(content: Text('성공적으로 구매했습니다!'),)); // TODO : snack bar doesn't show.
-                          },
-                        );
-                      }
-                    )
+                    Builder(builder: (BuildContext context) {
+                      return new FlatButton(
+                        child: new Text('구매하기'),
+                        onPressed: () async {
+                          _nameController.text = appProfile.user.displayName;
+                          _phoneController.text = appProfile.user.phoneNumber;
+                          var _quantity = int.parse(_quantityController.text);
+                          await widget.product.reference
+                              .collection('participants')
+                              .document(appProfile.user.uid)
+                              .setData(// with filename
+                                  {
+                            'displayName': _nameController.text,
+                            'phoneNumber': _phoneController.text,
+                            'quantity': _quantity,
+                          }).then((value) {
+                            Navigator.pop(context);
+                          });
+                          await widget.product.reference.updateData({
+                            'currentCount': FieldValue.increment(
+                                int.parse(_quantityController.text))
+                          }); // 구매수량 업데이트
+                          await widget.product.reference.updateData({
+                            'progress':
+                                _quantity / widget.product.objectCount as double
+                          }); // 프로그레스 업데이트
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('성공적으로 구매했습니다!'),
+                          )); // TODO : snack bar doesn't show.
+                        },
+                      );
+                    })
                   ],
                 );
               });
@@ -299,6 +303,8 @@ class EditPagePopupState extends State<EditPagePopup> {
   final TextEditingController _nameController = new TextEditingController();
   final TextEditingController _priceController = new TextEditingController();
   final TextEditingController _descController = new TextEditingController();
+  final TextEditingController _goalController = new TextEditingController();
+  final TextEditingController _addrController = new TextEditingController();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -315,6 +321,8 @@ class EditPagePopupState extends State<EditPagePopup> {
     _nameController.text = widget.product.name;
     _priceController.text = widget.product.price.toString();
     _descController.text = widget.product.desc;
+    _goalController.text = widget.product.objectCount.toString();
+    _addrController.text = widget.product.shipAddr;
   }
 
   @override
@@ -343,6 +351,8 @@ class EditPagePopupState extends State<EditPagePopup> {
                   'name': _nameController.text,
                   'price': int.parse(_priceController.text),
                   'desc': _descController.text,
+                  'shipAddr': _addrController.text,
+                  'objectCount': int.parse(_goalController.text),
                   'filename': path.basename(_image.path),
                   'modified': FieldValue.serverTimestamp()
                 }).then((value) => Navigator.pop(context));
@@ -352,6 +362,8 @@ class EditPagePopupState extends State<EditPagePopup> {
                   'name': _nameController.text,
                   'price': int.parse(_priceController.text),
                   'desc': _descController.text,
+                  'shipAddr': _addrController.text,
+                  'objectCount': int.parse(_goalController.text),
                   'modified': FieldValue.serverTimestamp()
                 }).then((value) => Navigator.pop(context));
               }
@@ -411,6 +423,8 @@ class EditPagePopupState extends State<EditPagePopup> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               TextField(
+                                decoration:
+                                    InputDecoration(labelText: "Product Name"),
                                 controller: _nameController,
                               ),
                               //Text(product.name, style: Theme.of(context).textTheme.headline5.merge(TextStyle(color: Color.fromRGBO(42, 88, 149, 1.0), fontWeight: FontWeight.bold)),),
@@ -418,6 +432,7 @@ class EditPagePopupState extends State<EditPagePopup> {
                                 height: 12.0,
                               ),
                               TextField(
+                                decoration: InputDecoration(labelText: "Price"),
                                 controller: _priceController,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
@@ -436,15 +451,26 @@ class EditPagePopupState extends State<EditPagePopup> {
                     SizedBox(
                       height: 8.0,
                     ),
-                    Divider(
-                      thickness: 1.5,
-                    ),
                     SizedBox(
                       height: 8.0,
                     ),
                     TextField(
+                      decoration: InputDecoration(labelText: "Descriptoin"),
                       controller: _descController,
                     ),
+                    TextField(
+                      controller: _goalController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(labelText: "목표수량"),
+                      inputFormatters: <TextInputFormatter>[
+                        WhitelistingTextInputFormatter.digitsOnly
+                      ],
+                    ),
+                    TextField(
+                      controller: _addrController,
+                      decoration: InputDecoration(labelText: "물품수령지"),
+                    ),
+
                     //Text(product.desc, style: Theme.of(context).textTheme.bodyText1.merge(TextStyle(color: Colors.blueAccent)))
                   ],
                 ),

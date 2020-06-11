@@ -239,6 +239,7 @@ class AddPageState extends State<AddPage> {
                       InputDecoration(labelText: "물품수령지"),
                     ),
                     ListTile(
+                      leading: Icon(Icons.date_range),
                       title: Text("공구 마감일"),
 
                       onTap: () {

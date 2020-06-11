@@ -144,13 +144,13 @@ class HomePageState extends State<HomePage> {
                     children: <Widget>[
                       Text(
                         product.name,
-                        style: theme.textTheme.title,
+                        style: theme.textTheme.bodyText1,
                         maxLines: 1,
                       ),
                       SizedBox(height: 8.0),
                       Text(
                         '₩'+product.price.toString(),//formatter.format(product.price),
-                        style: theme.textTheme.bodyText1,
+                        style: theme.textTheme.bodyText2,
                       ),
                     ],
                   ),
@@ -165,7 +165,7 @@ class HomePageState extends State<HomePage> {
               height: 30,
               width: 70,
               child: FlatButton(
-                child: Text('more', style: TextStyle(fontSize: 14),),
+                child: Text('more', style: TextStyle(fontSize: 12),),
                 textColor: theme.primaryColor,
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(product: product,)));
@@ -200,12 +200,12 @@ class HomePageState extends State<HomePage> {
           );
         }
       ),
-      title: Text(product.name),
+      title: Text(product.name,style: theme.textTheme.bodyText1,),
       subtitle: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("공구가: ₩"+product.price.toString()),
+            Text("공구가: ₩"+product.price.toString(),style: theme.textTheme.bodyText2,),
             Row(
               children: [
                 Text("진행도: "),
@@ -244,7 +244,9 @@ class HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(child: Image.network(appProfile.user.photoUrl)),
+                    SizedBox(height: 8,),
                     Text(appProfile.user.displayName + ' 회원님', style: Theme.of(context).textTheme.headline5.merge(TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),),
+                    SizedBox(height: 8,),
                     Text('안녕하세요', style: Theme.of(context).textTheme.headline6.merge(TextStyle(color: Colors.white))),
                   ]
                 )

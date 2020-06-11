@@ -136,11 +136,14 @@ class DetailPageState extends State<DetailPage> {
               Divider(
                 thickness: 1.5,
               ),
-              SizedBox(
-                height: 8.0,
+              ListTile(
+                leading: Text("상세설명"),
+                title: Text(product.desc,style: Theme.of(context).textTheme.bodyText1),
               ),
-
-              Text(product.desc, style: Theme.of(context).textTheme.bodyText1),
+              SizedBox(
+                height: 45.0,
+              ),
+              //Text(product.desc, style: Theme.of(context).textTheme.bodyText1),
             ],
           ),
         ),

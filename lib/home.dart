@@ -29,6 +29,8 @@ import 'package:gongguapp/add.dart';
 
 bool isGrid = true;
 
+String _category = 'All';
+
 class DisplayMenuWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => DisplayMenuWidgetState();
@@ -95,6 +97,14 @@ class HomePageState extends State<HomePage> {
 //          if (isDescending) return b['price'].compareTo(a['price']);
 //          else return a['price'].compareTo(b['price']);
 //        });
+        print(_category);
+
+        if (_category != 'All') { // not all
+          list = list.where((element) => element.data['category'] == _category).toList();
+        }
+
+        if (list.isEmpty) return Center(child: Text('상품이 없습니다.'),); // 상품이 없을 때.
+
         return isGrid ? _buildGrid(context, list) : _buildList(context, list);
       },
     );
@@ -230,6 +240,29 @@ class HomePageState extends State<HomePage> {
     );
   }
 
+  List<ListTile> _buildCategoryListWidget(BuildContext context) {
+    var list = <ListTile>[];
+    list.add(ListTile( // All case.
+      title: Text('All'),
+      //trailing: IconButton(icon: Icon(Icons.favorite_border)),
+      onTap: () {
+        _category = 'All';
+        rebuild();
+        Navigator.pop(context);
+      },
+    ));
+    list.addAll(Category.values.map((e) => ListTile(
+      title: Text(e.toString().substring(9)),
+      //trailing: IconButton(icon: Icon(Icons.favorite_border)), // TODO : here too..
+      onTap: () {
+        _category = e.toString().substring(9);
+        rebuild();
+        Navigator.pop(context);
+      },
+    )).toList());
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -301,13 +334,7 @@ class HomePageState extends State<HomePage> {
             ExpansionTile(
               title: Text('카테고리', style: Theme.of(context).textTheme.subtitle1,),
               initiallyExpanded: true,
-              children: Category.values.map((e) => ListTile(
-                title: Text(e.toString().substring(9)),
-                trailing: IconButton(icon: Icon(Icons.favorite_border)), // TODO : here too..
-                onTap: () {
-                  // TODO : firebase 연동하기.
-                },
-              )).toList()
+              children: _buildCategoryListWidget(context),
             ),
           ],
         ),

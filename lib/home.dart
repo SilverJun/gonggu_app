@@ -242,17 +242,54 @@ class HomePageState extends State<HomePage> {
             DrawerHeader(
               child: Container(
                 padding: EdgeInsets.symmetric(),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(child: Image.network(appProfile.user.photoUrl)),
-                    SizedBox(height: 8,),
-                    Text(appProfile.user.displayName + ' 회원님', style: Theme.of(context).textTheme.headline5.merge(TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),),
-                    SizedBox(height: 8,),
-                    Text('안녕하세요', style: Theme.of(context).textTheme.headline6.merge(TextStyle(color: Colors.white))),
-                  ]
-                )
+                child:
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(width: 8,),
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          image: DecorationImage(
+                            image: NetworkImage(appProfile.user.photoUrl),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(50.0),),
+                          border: Border.all(
+                              color : Theme.of(context).accentColor,
+                              width: 3
+                          )
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '안녕하세요,',
+                              style: Theme.of(context).textTheme.headline5.merge(TextStyle(color: Colors.white)),
+                              textAlign: TextAlign.left,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              appProfile.user.displayName + '님',
+                              style: Theme.of(context).textTheme.headline6.merge(TextStyle(color: Colors.white)),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,

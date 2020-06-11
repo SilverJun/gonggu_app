@@ -38,13 +38,20 @@ class ProgressPageState extends State<ProgressPage> {
         child: ListView(
           children: <Widget>[
 
-            Center(child: Text(widget.product.name + ' 공구 진행도', style: Theme.of(context).textTheme.headline4)),
+            Center(child: Text(widget.product.name + ' 공구 진행도', style: Theme.of(context).textTheme.headline5)),
             SizedBox(height: 8.0,),
             Divider(),
             SizedBox(height: 8.0,),
             SleekCircularSlider(
               appearance: CircularSliderAppearance(
-                  customWidths: CustomSliderWidths(progressBarWidth: 10)),
+                customColors: CustomSliderColors(progressBarColors: [
+                  Theme.of(context).accentColor,
+                  Theme.of(context).primaryColor,
+                ],
+                  trackColor: Theme.of(context).accentColor,
+                ),
+                customWidths: CustomSliderWidths(progressBarWidth: 10)
+              ),
               min: 0,
               max: widget.product.objectCount.toDouble(),
               initialValue: widget.product.currentCount.toDouble(),
@@ -54,7 +61,7 @@ class ProgressPageState extends State<ProgressPage> {
             Center(child: Text(widget.product.currentCount.toString()+' / '+widget.product.objectCount.toString(), style: TextStyle(fontSize: 30.0),)),
 
             SizedBox(height: 32.0,),
-            Center(child: Text('공구 참여자 정보', style: Theme.of(context).textTheme.headline4)),
+            Center(child: Text('공구 참여자 정보', style: Theme.of(context).textTheme.headline5)),
             SizedBox(height: 8.0,),
             Divider(),
 
